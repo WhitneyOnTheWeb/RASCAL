@@ -5,11 +5,11 @@ import subprocess
 Project:    RASCAL: Robotic Autonomous Space Cadet Adminstration Lackey
 File:       util.py
 Author:     Whitney King (@WhitneyOnTheWeb)
-Fork:       Henri Sweers FB Modbot (2014 / Py2)
+Fork:       Zac Sweers FB Modbot (2014 / Py2)
 
 Log:
     - 26/06/2019 (v1.0):
-      - Forked repro of old bot used for automoding roomate search FB groups
+      - Forked repro of old bot used for automodding roommate search FB groups
       - Restructure from Python 2 -> 3.7
       - Add scaffolding for Windows/Mac features
       - Redesign for generalized group administration features
