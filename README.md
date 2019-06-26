@@ -7,7 +7,7 @@ RASCAL: Robotic Autonomous Space Cadet Administration Lackey
   <sub><strong>Robotic Autonomous Space Cadet Administration Lackey</strong></sub>
 </p>
 
-</hr>
+---
 
 RASCAL is a customized administration bot App for Facebook Groups, designed as a rearchitected update and expansion of [ZacSweers' Facebook Modbot](https://github.com/ZacSweers/FB_Mod_Bot). RASCAL's design is intended to aid in the speed, consistency, security, and reduction of repetitive human-led administration duties; it is **not** intended to be a replacement for administrative oversight or involvement in Facebook Groups.
 
@@ -18,8 +18,8 @@ RASCAL runs as a Facebook Developer App, is coded in Python 3.7 using the [facep
 - **Add Page as Group Administrator:** adding the Facebook page as an administrator for the group you want the bot to run in will allow the bot to handle assigned administrative actions
 - **Register Account for Facebook Developer:** in order to sign up for Facebook Developer, you will have to go through the application process provided on the Facebook Developer website
 
-- *Why make a dedicated app instead of just creating an access token?*
-  - Only an app (with an app ID and secret key) can programatically request an **extended** access token. Without doing this, you'd need to generate a new access token every two hours.
+*Why make a dedicated app instead of just creating an access token?*
+Only an app (with an app ID and secret key) can programatically request an **extended** access token. Without doing this, you'd need to generate a new access token every two hours.
 
 ### RASCAL Modifications:
 
