@@ -1,145 +1,57 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import os
 import cPickle as pickle
 import datetime
-import facepy
 import getopt
-import time
-import sys
+import os
 import re
-from util import log, Color, notify_mac
+import sys
+import time
 
-__author__ = 'Henri Sweers'
+import facepy
 
-############## Global vars ##############
+import util as u
 
-# 24 hours, in seconds
-time_limit = 86400
+'''----------------------------------------------------------------------------
+Project:    RASCAL: Robotic Autonomous Space Cadet Adminstration Lackey
+File:       post_cleanup.py
+Author:     @WhitneyOnTheWeb
 
-# Pickle cache file caching warned posts
-warned_db = "fb_subs_cache"
+Original:   check_and_delete.py
 
-# Pickle cache file caching valid posts
-valid_db = "fb_subs_valid_cache"
-
-# Pickle cache file for properties
-prop_file = "login_prop"
-
-# Boolean for key extensions
-extend_key = False
-
-# Dry run to disable deletions on a run
-dry_run = False
-
-# Boolean for checking heroku
-running_on_heroku = False
-
-# Tags: allowed leading characters
-allowed_leading_characters = ('*', '-')
-
-# Tags: allowed tags
-allowed_tags = {'looking', 'offering', 'parking', 'rooming'}
+Functionality designed to review posts for spam, fraud, or other malicious
+patterns, then flag / warn / action identified violations
+----------------------------------------------------------------------------'''
+__author__ = 'Whitney King'
 
 
-# Junk method that I use for testing stuff periodically
+'''-------------------------------------
+Global Variables
+================
+'''
+time_limit = 86400                  # 60 * 60 * 24 (s --> h)
+warned_db = 'fb_subs_cache'         # warned posts cache
+valid_db = 'fb_subs_valid_cache'    # valid posts cache
+
+tag_delimiters = ('*', '-')         # leading symbols for post tags
+post_tags = u.load_list('post_tags.txt')
+
+bot_delimiters = ('!', '#')         # leading symbols for bot tags
+bot_tags = u.load_list('bot_tags.txt')
+
+# Booleans
+dry_run = False                     # disable deletion dry-run
+extend_key = False                  # is extended key
+
+'''-------------------------------------
+Method: test
+
+Template placeholder function for displaying
+output when running tests
+'''
 def test():
-    log('Test', Color.PURPLE)
-
-
-# Use this method to set new vals for props, such as on your first run
-def set_new_props():
-    saved_dict = load_properties()
-
-    ###############################################################
-    #### Uncomment lines below as needed to manually set stuff ####
-    ###############################################################
-
-    ###########################
-    #### These are strings ####
-    ###########################
-
-    # saved_dict['sublets_oauth_access_token'] = "put-auth-token-here"
-    # saved_dict['sublets_api_id'] = "put-app-id-here"
-    # saved_dict['sublets_secret_key'] = "put-secret-key-here"
-    # saved_dict['access_token_expiration'] = "put-access-token-expiration-here"
-    # saved_dict['group_id'] = "put-group-id-here"
-
-    ################################################################
-    #### If you want post deletion, must be done outside of API ####
-    ################################################################
-
-    # saved_dict['FB_USER'] = "put-facebook-username-here"
-    # saved_dict['FB_PWD'] = "put-facebook-password-here"
-
-
-    ########################
-    #### These are ints ####
-    ########################
-
-    # saved_dict['bot_id'] = put-bot-id-here
-    # saved_dict['ignored_post_ids'].append(<id_num>)
-    # saved_dict['ignore_source_ids'].append(<id_num>)
-    # saved_dict['admin_ids'].append(<id_num>)
-
-    #################################################################
-    #### You can do other stuff too, the above are just examples ####
-    #################################################################
-
-    save_properties(saved_dict)
-
-
-# Method for initializing your prop values
-def init_props():
-    test_dict = {'sublets_oauth_access_token': "put-auth-token-here",
-                 'sublets_api_id': "put-app-id-here",
-                 'sublets_secret_key': "put-secret-key-here",
-                 'access_token_expiration': "put-access-token-expiration-here",
-                 'group_id': 'put-group-id-here',
-                 'FB_USER': "put-facebook-username-here",
-                 'FB_PWD': "put-facebook-password-here",
-                 'bot_id': -1,
-                 'ignored_post_ids': [],
-                 'ignore_source_ids': [],
-                 'admin_ids': []}
-    save_properties(test_dict)
-    saved_dict = load_properties()
-    assert test_dict == saved_dict
-
-
-def save_properties(data):
-    """
-    Save props data into either memcache (heroku only) or pickle to local file
-    :param data: Dictionary of props data
-    """
-    if running_on_heroku:
-        mc.set('props', data)
-    else:
-        with open(prop_file, 'w+') as login_prop_file:
-            pickle.dump(data, login_prop_file)
-
-
-def load_properties():
-    """
-    Load properties data from either memcache (heroku only) or local pickled file
-
-    :rtype : dict
-    :return: Dictionary of all the properties
-    """
-    if running_on_heroku:
-        obj = mc.get('props')
-        if not obj:
-            return {}
-        else:
-            return obj
-    else:
-        if os.path.isfile(prop_file):
-            with open(prop_file, 'r+') as login_prop_file:
-                data = pickle.load(login_prop_file)
-                return data
-        else:
-            sys.exit("No prop file found")
+    u.log('Test', u.Color.PURPLE)
 
 
 # Method for loading a cache. Either returns cached values or original data
