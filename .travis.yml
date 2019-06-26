@@ -1,7 +1,9 @@
 language: python
 python:
-  - "2.7"
-# command to install dependencies
-install: "pip install -r requirements.txt"
-# command to run tests
-script: python facebook_sublet_group_bot/test.py
+  - '3.7'
+
+# Dependencies Script
+install: 'pip install -r requirements.txt'
+
+# Test Script
+script: python rascal_bot/test.py
