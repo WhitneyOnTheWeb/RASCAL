@@ -28,11 +28,11 @@ Only an app (with an app ID and secret key) can programatically request an **ext
 
 ### RASCAL Modifications
 
-You may modify RASCAL to perform administrative taskmastering in individual Facebook groups, so long as RASCAL's updates and endeavors abide Asimov's Laws of Robotics:
+You may modify RASCAL to perform administrative taskmastering in individual Facebook groups, so long as RASCAL's updates and endeavors abide Asimov's Three Laws of Robotics:
 
-* A robot may not injure a human being or, through inaction, allow a human being to come to harm.
-* A robot must obey orders given it by human beings except where such orders would conflict with the First Law.
-* A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.
+1. A robot may not injure a human being or, through inaction, allow a human being to come to harm.
+2. A robot must obey orders given it by human beings except where such orders would conflict with the First Law.
+3. A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.
 
 ### RASCAL To-Do
 
