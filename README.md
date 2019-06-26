@@ -53,8 +53,7 @@ You may modify RASCAL to perform administrative taskmastering in individual Face
 
 ### Known Issues
 
-* Depending on how many posts you request at once (the `LIMIT` option in FQL queries), Facebook's API periodically crashes and returns an internal server error.
-  * Fortunately this doesn't seem to happen unless you ask for extremely high numbers.
+* Outdated Codebase
 
 
 ### [Changelog](https://github.com/WhitneyOnTheWeb/RASCAL/blob/master/CHANGELOG.md)
