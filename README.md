@@ -2,10 +2,8 @@ RASCAL: Robotic Autonomous Space Cadet Administration Lackey
 ============================================================
 
 <p align="center">
-  <figure>
-    <img src="https://i.imgur.com/jmm8B6z.jpg" alt="I am RASCAL" height="250"/>
-    <figcaption><small><strong>Robotic Autonomous Space Cadet Administration Lackey</strong></small></figcaption>
-  </figure>
+  <img src="https://i.imgur.com/jmm8B6z.jpg" alt="I am RASCAL" height="250"/>
+  <sub><sup><strong>Robotic Autonomous Space Cadet Administration Lackey</strong></sup></sub>
 </p>
 
 </hr>
