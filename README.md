@@ -13,6 +13,8 @@ RASCAL
 
 RASCAL is a customized administration bot App for Facebook Groups, designed as a rearchitected update and expansion of [ZacSweers' Facebook Modbot](https://github.com/ZacSweers/FB_Mod_Bot). RASCAL's design is intended to aid in the speed, consistency, security, and reduction of repetitive human-led administration duties; it is **not** intended to be a replacement for administrative oversight or involvement in Facebook Groups.
 
+### About RASCAL
+
 RASCAL runs as a Facebook Developer App, is coded in Python 3.7 using the [facepy](https://github.com/jgorset/facepy) wrapper for Facebook Graph API, and has the following prerequisites:
 
 - **Facebook Account for Bot:** you can set up an entirely different account for your RASCAL bot, or use your personal account if you don't require them to be separated.
@@ -21,9 +23,10 @@ RASCAL runs as a Facebook Developer App, is coded in Python 3.7 using the [facep
 - **Register Account for Facebook Developer:** in order to sign up for Facebook Developer, you will have to go through the application process provided on the Facebook Developer website
 
 *Why make a dedicated app instead of just creating an access token?*
+
 Only an app (with an app ID and secret key) can programatically request an **extended** access token. Without doing this, you'd need to generate a new access token every two hours.
 
-### RASCAL Modifications:
+### RASCAL Modifications
 
 You may modify RASCAL to perform administrative taskmastering in individual Facebook groups, so long as RASCAL's updates and endeavors abide Asimov's Laws of Robotics:
 
@@ -31,7 +34,7 @@ You may modify RASCAL to perform administrative taskmastering in individual Face
 * A robot must obey orders given it by human beings except where such orders would conflict with the First Law.
 * A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.
 
-### RASCAL To-Do:
+### RASCAL To-Do
 
 * Upgrade from Python 2 -> Python 3.7
 * Validate facepy API Changes and Updates
