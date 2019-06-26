@@ -1,4 +1,9 @@
-__author__ = 'hsweers'
+__author__ = 'wking'
+
+'''Add new test posts here '''
+
+
+# Replace these examples posts from hzsweers with samples relevant to Facebook group
 
 good_posts = [
     """[OFFERING]
