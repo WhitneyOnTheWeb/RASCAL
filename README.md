@@ -57,4 +57,4 @@ You may modify RASCAL to perform administrative taskmastering in individual Face
   * Fortunately this doesn't seem to happen unless you ask for extremely high numbers.
 
 
-**[Changelog](https://github.com/WhitneyOnTheWeb/RASCAL/blob/master/CHANGELOG.md)**
+###[Changelog](https://github.com/WhitneyOnTheWeb/RASCAL/blob/master/CHANGELOG.md)
