@@ -45,3 +45,7 @@ ghostdriver.log
 *.xml
 *.iml
 .idea/
+
+#Visual Studio Code
+.vscode/
+settings.json
