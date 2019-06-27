@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
-
-import cPickle as pickle
+import csv
 import datetime
 import getopt
+import json
 import os
 import re
 import sys
@@ -22,6 +22,10 @@ Original:   check_and_delete.py
 
 Functionality designed to review posts for spam, fraud, or other malicious
 patterns, then flag / warn / action identified violations
+
+- Notes:  it seems that a good number of these methods can be moved
+          over into util.py to be used in a more generalized manner
+          with RASCAL functionality
 ----------------------------------------------------------------------------'''
 __author__ = 'Whitney King'
 
@@ -43,45 +47,6 @@ bot_tags = u.load_list('bot_tags.txt')
 # Booleans
 dry_run = False                     # disable deletion dry-run
 extend_key = False                  # is extended key
-
-'''-------------------------------------
-Method: test
-
-Template placeholder function for displaying
-output when running tests
-'''
-def test():
-    u.log('Test', u.Color.PURPLE)
-
-
-# Method for loading a cache. Either returns cached values or original data
-def load_cache(cachename, data):
-    if running_on_heroku:
-        if running_on_heroku:
-            obj = mc.get(cachename)
-            if not obj:
-                return data
-            else:
-                return obj
-    else:
-        if os.path.isfile(cachename):
-            with open(cachename, 'r+') as f:
-
-                # If the file isn't at its end or empty
-                if f.tell() != os.fstat(f.fileno()).st_size:
-                    return pickle.load(f)
-        else:
-            log("--No cache file found, a new one will be created", Color.BLUE)
-            return data
-
-
-# Method for saving to cache
-def save_cache(cachename, data):
-    if running_on_heroku:
-        mc.set(cachename, data)
-    else:
-        with open(cachename, 'w+') as f:
-            pickle.dump(data, f)
 
 
 # Manually update API token

@@ -1,49 +1,39 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import os
 import cPickle as pickle
+import csv
 import datetime
-import facebook
-import time
+import getopt
+import json
+import os
+import re
 import subprocess
 import sys
-import re
+import time
+
+import facepy
+
+import facebook
+import util as u
 from fbxmpp import SendMsgBot
-from util import log, Color
 from raven import Client
 
-__author__ = 'Henri Sweers'
+'''----------------------------------------------------------------------------
+Project:    RASCAL: Robotic Autonomous Space Cadet Adminstration Lackey
+File:       rascal.py
+Author:     @WhitneyOnTheWeb
 
-############## Global vars ##############
+Original:   fb_bot.py
 
-# 24 hours, in seconds
-time_limit = 86400
-
-# Pickle cache file caching warned posts
-warned_db = "fb_subs_cache"
-
-# Pickle cache file caching valid posts
-valid_db = "fb_subs_valid_cache"
-
-# Pickle cache file for properties
-prop_file = "login_prop"
-
-# Boolean for key extensions
-extend_key = False
-
-# Boolean for checking heroku
-running_on_heroku = False
-
-
-# Junk method that I use for testing stuff periodically
-def test():
-    log('Test', Color.PURPLE)
+RASCAL functional codebase for administrative tasks in Facebook Groups
+----------------------------------------------------------------------------'''
+__author__ = 'Whitney King'
 
 
 # Method for sending messages, adapted from here: http://goo.gl/oV5KtZ
 def send_message(recipient, message):
-    saved_props = load_properties()
+    saved_props = u.load_properties()
 
     # Access token
     access_token = saved_props['sublets_oauth_access_token']
@@ -71,132 +61,6 @@ def send_message(recipient, message):
     else:
         log("----Unable to connect, message sending fail", Color.RED)
 
-
-# Use this method to set new vals for props, such as on your first run
-def set_new_props():
-    saved_dict = load_properties()
-
-    ###############################################################
-    #### Uncomment lines below as needed to manually set stuff ####
-    ###############################################################
-
-    ###########################
-    #### These are strings ####
-    ###########################
-
-    # saved_dict['sublets_oauth_access_token'] = "put-auth-token-here"
-    # saved_dict['sublets_api_id'] = "put-app-id-here"
-    # saved_dict['sublets_secret_key'] = "put-secret-key-here"
-    # saved_dict['access_token_expiration'] = "put-access-token-expiration-here"
-    # saved_dict['group_id'] = "put-group-id-here"
-
-    ################################################################
-    #### If you want post deletion, must be done outside of API ####
-    ################################################################
-
-    # saved_dict['FB_USER'] = "put-facebook-username-here"
-    # saved_dict['FB_PWD'] = "put-facebook-password-here"
-
-
-    ########################
-    #### These are ints ####
-    ########################
-
-    # saved_dict['bot_id'] = put-bot-id-here
-    # saved_dict['ignored_post_ids'].append(<id_num>)
-    # saved_dict['ignore_source_ids'].append(<id_num>)
-    # saved_dict['admin_ids'].append(<id_num>)
-
-    #################################################################
-    #### You can do other stuff too, the above are just examples ####
-    #################################################################
-
-    save_properties(saved_dict)
-
-
-# Method for initializing your prop values
-def init_props():
-    test_dict = {'sublets_oauth_access_token': "put-auth-token-here",
-                 'sublets_api_id': "put-app-id-here",
-                 'sublets_secret_key': "put-secret-key-here",
-                 'access_token_expiration': "put-access-token-expiration-here",
-                 'group_id': 'put-group-id-here',
-                 'FB_USER': "put-facebook-username-here",
-                 'FB_PWD': "put-facebook-password-here",
-                 'bot_id': -1,
-                 'ignored_post_ids': [],
-                 'ignore_source_ids': [],
-                 'admin_ids': []}
-    save_properties(test_dict)
-    saved_dict = load_properties()
-    assert test_dict == saved_dict
-
-
-# Method for saving (with pickle) your prop values
-def save_properties(data):
-    if running_on_heroku:
-        mc.set('props', data)
-    else:
-        with open(prop_file, 'w+') as login_prop_file:
-            pickle.dump(data, login_prop_file)
-
-
-# Method for loading (with pickle) your prop values
-def load_properties():
-    if running_on_heroku:
-        obj = mc.get('props')
-        if not obj:
-            return {}
-        else:
-            return obj
-    else:
-        if os.path.isfile(prop_file):
-            with open(prop_file, 'r+') as login_prop_file:
-                data = pickle.load(login_prop_file)
-                return data
-        else:
-            sys.exit("No prop file found")
-
-
-# Method for loading a cache. Either returns cached values or original data
-def load_cache(cachename, data):
-    if running_on_heroku:
-        if running_on_heroku:
-            obj = mc.get(cachename)
-            if not obj:
-                return data
-            else:
-                return obj
-    else:
-        if os.path.isfile(cachename):
-            with open(cachename, 'r+') as f:
-
-                # If the file isn't at its end or empty
-                if f.tell() != os.fstat(f.fileno()).st_size:
-                    return pickle.load(f)
-        else:
-            log("--No cache file found, a new one will be created", Color.BLUE)
-            return data
-
-
-# Method for saving to cache
-def save_cache(cachename, data):
-    if running_on_heroku:
-        mc.set(cachename, data)
-    else:
-        with open(cachename, 'w+') as f:
-            pickle.dump(data, f)
-
-
-# Nifty method for sending notifications on my mac when it's done
-def notify_mac():
-    if sys.platform == "darwin":
-        try:
-            subprocess.call(
-                ["terminal-notifier", "-message", "Done", "-title", "FB_Bot",
-                 "-sound", "default"])
-        except OSError:
-            print "If you have terminal-notifier, this would be a notification"
 
 
 # Method for checking tag validity

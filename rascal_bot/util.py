@@ -19,9 +19,22 @@ __author__ = 'Whitney King'
 Global Variables
 ================
 '''
-isHeroku = False            # is bot running on heroku?
-isPickled = False           # is there a .pkl for properties?
-prop_file = 'properties'    # properties pickle name
+time_limit = 86400                  # 60 * 60 * 24 (s --> h)
+prop_file = 'properties'            # properties pickle name
+warned_db = 'fb_subs_cache'         # warned posts cache
+valid_db = 'fb_subs_valid_cache'    # valid posts cache
+
+tag_delimiters = ('*', '-')         # leading symbols for post tags
+post_tags = load_list('post_tags.txt')
+
+bot_delimiters = ('!', '#')         # leading symbols for bot tags
+bot_tags = load_list('bot_tags.txt')
+
+# Booleans
+is_heroku = False                    # is bot running on heroku?
+is_pickled = False                   # is there a .pkl for properties?
+dry_run = False                     # disable deletion dry-run
+extend_key = False                  # is extended key
 
 
 '''-------------------------------------
@@ -40,6 +53,16 @@ class Color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
+
+
+'''-------------------------------------
+Method: test
+
+Template placeholder function for displaying
+output when running tests
+'''
+def test():
+    log('Test', Color.PURPLE)
 
 
 '''-------------------------------------
@@ -116,7 +139,7 @@ Input:
     <data>: dict of property key-value pairs
 '''
 def save_properties(data):
-    if isHeroku:        # save to heroku
+    if is_heroku:        # save to heroku
         mc.set('properties', data)
     else:               # save to .pkl
         with open(prop_file, 'w+') as f:
@@ -139,7 +162,7 @@ Loads saved property values from either:
              key-value pairs
 '''
 def load_properties():
-    if isHeroku:        # load from heroku
+    if is_heroku:        # load from heroku
         obj = mc.get('properties')
         if not obj:
             return {}
@@ -164,12 +187,60 @@ properties text file
 Input:
     <props>:    dict containing properties
     <key>:      key to add or update
-    <value>     value to set
+    <value>:    value to set
 '''
 def set_property(props, key, value):
     # Add if needed for RASCAL operation
     pass
 
+
+'''-------------------------------------
+Method: load_cache
+
+Loads cache from user defined locations.
+Either returns cached values or original data
+
+Input:
+    <cachename>:    cache to select
+    <data>:         data to return
+
+Returns:
+    <obj>:          object with cached values
+'''
+def load_cache(cachename, data):
+    if is_heroku:
+        if is_heroku:
+            obj = mc.get(cachename)
+            if not obj:
+                return data
+            else:
+                return obj
+    else:
+        if os.path.isfile(cachename):
+            with open(cachename, 'r+') as f:
+                # If the file isn't at its end or empty
+                if f.tell() != os.fstat(f.fileno()).st_size:
+                    return pickle.load(f)
+        else:
+            log("--No cache file found. Creating new cache file.", Color.BLUE)
+            return data
+
+
+'''-------------------------------------
+Method: save_cache
+
+Saves cache to user defined location.
+
+Input:
+    <cachename>:    cache to select
+    <data>:         data to save
+'''
+def save_cache(cachename, data):
+    if is_heroku:
+        mc.set(cachename, data)
+    else:
+        with open(cachename, 'w+') as f:
+            pickle.dump(data, f)
 
 
 '''-------------------------------------
