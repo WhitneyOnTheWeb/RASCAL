@@ -66,6 +66,22 @@ def test():
 
 
 '''-------------------------------------
+Method: extend_access_token
+
+Used to automatically extend access token
+'''
+def extend_access_token(graph, now_time, saved_props,
+                        sublets_api_id, sublets_secret_key):
+    log("Extending access token", Color.BOLD)
+    result = graph.extend_access_token(sublets_api_id, sublets_secret_key)
+    new_token = result['access_token']
+    new_time = int(result['expires']) + now_time
+    saved_props['sublets_oauth_access_token'] = new_token
+    saved_props['access_token_expiration'] = new_time
+    log("Token extended", Color.BOLD)
+
+
+'''-------------------------------------
 Method: load_list
 
 Generate list of values to be used by RASCAL
@@ -119,6 +135,7 @@ Method: init_properties
 Initializes property values for RASCAL,
 then uploads them in chosen format
 '''
+
 def init_properties():
     test_dict = get_settings('properties.txt')
     save_properties(test_dict)

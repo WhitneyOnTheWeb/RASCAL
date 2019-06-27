@@ -16,3 +16,4 @@ RASCAL Changelog
       - Add scaffolding for Windows/Mac features
     - Redesign for generalized group administration features
     - Design customized TOCA group administrative features
+    - Move property and cache related functions into util.py

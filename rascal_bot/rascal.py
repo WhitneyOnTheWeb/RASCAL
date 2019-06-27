@@ -31,6 +31,26 @@ RASCAL functional codebase for administrative tasks in Facebook Groups
 __author__ = 'Whitney King'
 
 
+# Method for retrieving user ID's of admins in group, ignoring bot ID
+def retrieve_admin_ids(group_id, bot_id, auth_token):
+    # Retrieve the uids via FQL query
+    graph = facebook.GraphAPI(auth_token)
+    admins_query = \
+        "SELECT uid FROM group_member WHERE gid=" + group_id + " AND" + \
+        " administrator AND NOT (uid = " + str(bot_id) + ")"
+    admins = graph.fql(query=admins_query)
+
+    # Parse out the uids from the response
+    admins_list = [admin['uid'] for admin in admins]
+
+    # Update the admin_ids in our properties
+    saved_props = load_properties()
+    saved_props['admin_ids'] = admins_list
+    save_properties(saved_props)
+
+    return admins_list
+
+
 # Method for sending messages, adapted from here: http://goo.gl/oV5KtZ
 def send_message(recipient, message):
     saved_props = u.load_properties()
@@ -61,6 +81,11 @@ def send_message(recipient, message):
     else:
         log("----Unable to connect, message sending fail", Color.RED)
 
+
+# Extracted logic for messaging admins a message
+def message_admins(message, auth_token, app_id, bot_id, group_id):
+    for admin in retrieve_admin_ids(group_id, bot_id, auth_token):
+        send_message(str(admin), message)
 
 
 # Method for checking tag validity
@@ -97,44 +122,6 @@ def check_for_parking_tag(message_text):
         return True
     else:
         return False
-
-
-# Method for extending access token
-def extend_access_token(graph, now_time, saved_props, sublets_api_id,
-                        sublets_secret_key):
-    log("Extending access token", Color.BOLD)
-    result = graph.extend_access_token(sublets_api_id, sublets_secret_key)
-    new_token = result['access_token']
-    new_time = int(result['expires']) + now_time
-    saved_props['sublets_oauth_access_token'] = new_token
-    saved_props['access_token_expiration'] = new_time
-    log("Token extended", Color.BOLD)
-
-
-# Method for retrieving user ID's of admins in group, ignoring bot ID
-def retrieve_admin_ids(group_id, bot_id, auth_token):
-    # Retrieve the uids via FQL query
-    graph = facebook.GraphAPI(auth_token)
-    admins_query = \
-        "SELECT uid FROM group_member WHERE gid=" + group_id + " AND" + \
-        " administrator AND NOT (uid = " + str(bot_id) + ")"
-    admins = graph.fql(query=admins_query)
-
-    # Parse out the uids from the response
-    admins_list = [admin['uid'] for admin in admins]
-
-    # Update the admin_ids in our properties
-    saved_props = load_properties()
-    saved_props['admin_ids'] = admins_list
-    save_properties(saved_props)
-
-    return admins_list
-
-
-# Extracted logic for messaging admins a message
-def message_admins(message, auth_token, app_id, bot_id, group_id):
-    for admin in retrieve_admin_ids(group_id, bot_id, auth_token):
-        send_message(str(admin), message)
 
 
 # Delete posts older than 30 days old
